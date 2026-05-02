@@ -1,0 +1,21 @@
+# Backend
+target/
+*.class
+*.log
+.idea/
+*.iml
+
+# Frontend
+node_modules/
+dist/
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+*.env
+!*.env.example
+.sql
+backend/src/main/resources/db/migration

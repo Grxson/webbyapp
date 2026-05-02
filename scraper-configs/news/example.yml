@@ -1,0 +1,19 @@
+name: "Example News Scraper"
+type: STATIC
+target_url: "https://example.com/news"
+selectors:
+  - field: headline
+    css: ".article-title"
+    attribute: text
+  - field: summary
+    css: ".article-summary"
+    attribute: text
+  - field: published_at
+    css: ".publish-date"
+    attribute: text
+proxy: true
+rate_limit_ms: 3000
+schedule: "0 */1 * * *"
+alerts:
+  - condition: "items > 0"
+    message: "New articles found"

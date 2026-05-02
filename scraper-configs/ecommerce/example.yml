@@ -1,0 +1,26 @@
+name: "Example E-commerce Scraper"
+type: STATIC
+target_url: "https://example.com/products"
+pagination:
+  type: QUERY_PARAM
+  param: page
+  start: 1
+  max: 10
+selectors:
+  - field: title
+    css: ".product-title"
+    attribute: text
+  - field: price
+    css: ".product-price .amount"
+    attribute: text
+    transform: stripCurrency
+  - field: image
+    css: ".product-image img"
+    attribute: src
+proxy: true
+js_render: false
+rate_limit_ms: 2000
+schedule: "0 */6 * * *"
+alerts:
+  - condition: "items == 0"
+    message: "No products found"

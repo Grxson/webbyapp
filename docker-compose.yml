@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  scraper-api:
+    build: ./backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://scraper-db:5432/scraper
+      - SPRING_RABBITMQ_HOST=scraper-queue
+      - SPRING_DATA_REDIS_HOST=scraper-cache
+    depends_on:
+      scraper-db:
+        condition: service_healthy
+
+  scraper-ui:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:8080/api
+
+  scraper-db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_DB=scraper
+      - POSTGRES_USER=scraper
+      - POSTGRES_PASSWORD=scraper123
+    ports:
+      - "5432:5432"
+    volumes:
+      - scraper-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U scraper"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  scraper-queue:
+    image: rabbitmq:3.13-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  scraper-cache:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  scraper-db-data:
