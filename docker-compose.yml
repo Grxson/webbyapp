@@ -4,12 +4,18 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "8081:8080"
+      - "${API_PORT}:8080"
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://scraper-db:5432/scraper
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://scraper-db:${DB_DOCKER_PORT}/${DB_NAME}
+      - SPRING_DATASOURCE_USERNAME=${DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
       - SPRING_RABBITMQ_HOST=scraper-queue
+      - SPRING_RABBITMQ_USERNAME=${RABBITMQ_USER}
+      - SPRING_RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
       - SPRING_DATA_REDIS_HOST=scraper-cache
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION=${JWT_EXPIRATION}
     depends_on:
       scraper-db:
         condition: service_healthy
@@ -21,20 +27,20 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - VITE_API_URL=http://localhost:8081/api
+      - VITE_API_URL=http://localhost:${API_PORT}/api
 
   scraper-db:
     image: postgres:16-alpine
     environment:
-      - POSTGRES_DB=scraper
-      - POSTGRES_USER=scraper
-      - POSTGRES_PASSWORD=scraper123
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
-      - "5432:5432"
+      - "${DB_PORT}:${DB_DOCKER_PORT}"
     volumes:
       - scraper-db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U scraper"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -42,13 +48,16 @@ services:
   scraper-queue:
     image: rabbitmq:3.13-management-alpine
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "${RABBITMQ_PORT}:5672"
+      - "${RABBITMQ_MANAGEMENT_PORT}:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
 
   scraper-cache:
     image: redis:7-alpine
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT}:6379"
 
 volumes:
   scraper-db-data:
