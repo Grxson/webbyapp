@@ -1,10 +1,18 @@
-import { Outlet, NavLink } from 'react-router-dom';
+import { NavLink, Routes, Route, Navigate } from 'react-router-dom';
 import { LayoutDashboard, Globe, Play, Database, Download, Server, Bell, Settings, LogOut } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 import { useThemeStore } from '../../stores/themeStore';
 import { cn } from '../../lib/utils';
 import { Button } from '../ui/button';
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
+import { Card, CardHeader, CardTitle } from '../ui/card';
+import DashboardPage from '../../pages/DashboardPage';
+import ScrapersPage from '../../pages/ScrapersPage';
+import JobsPage from '../../pages/JobsPage';
+import DataPage from '../../pages/DataPage';
+import ExportPage from '../../pages/ExportPage';
+import ProxiesPage from '../../pages/ProxiesPage';
+import AlertsPage from '../../pages/AlertsPage';
+import SettingsPage from '../../pages/SettingsPage';
 
 const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -62,7 +70,17 @@ export default function MainLayout() {
       </aside>
 
       <main className="flex-1 bg-background p-6">
-        <Outlet />
+        <Routes>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/scrapers" element={<ScrapersPage />} />
+          <Route path="/jobs" element={<JobsPage />} />
+          <Route path="/data" element={<DataPage />} />
+          <Route path="/export" element={<ExportPage />} />
+          <Route path="/proxies" element={<ProxiesPage />} />
+          <Route path="/alerts" element={<AlertsPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        </Routes>
       </main>
     </div>
   );

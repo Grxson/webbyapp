@@ -1,8 +1,8 @@
-version: '3.8'
-
 services:
   scraper-api:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     environment:
@@ -15,7 +15,9 @@ services:
         condition: service_healthy
 
   scraper-ui:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     environment:
