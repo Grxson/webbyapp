@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ScrapedDataRepository extends JpaRepository<ScrapedData, Long> {
     Page<ScrapedData> findByScraperUserId(Long userId, Pageable pageable);
     Page<ScrapedData> findByScraperId(Long scraperId, Pageable pageable);
+    java.util.List<ScrapedData> findByScraperIdOrderByScrapedAtDesc(Long scraperId);
 }

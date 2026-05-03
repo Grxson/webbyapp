@@ -23,6 +23,6 @@ public class UserSettings {
     @Column(name = "email_notifications")
     private boolean emailNotifications;
 
-    @Column(name = "dashboard_layout")
+    @Column(name = "dashboard_layout", columnDefinition = "jsonb")
     private String dashboardLayout;
 }
