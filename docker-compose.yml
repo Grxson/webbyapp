@@ -35,7 +35,7 @@ services:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_HOST_AUTH_METHOD=md5
+      - POSTGRES_HOST_AUTH_METHOD=scram-sha-256
     ports:
       - "${DB_PORT}:${DB_DOCKER_PORT}"
     volumes:
@@ -59,6 +59,16 @@ services:
     image: redis:7-alpine
     ports:
       - "${REDIS_PORT}:6379"
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@scraper.dev
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"
+    depends_on:
+      - scraper-db
 
 volumes:
   scraper-db-data:
